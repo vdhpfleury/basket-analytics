@@ -1,4 +1,4 @@
-# Benchmarks — Détection (M3)
+# Benchmarks — Détection (M3) et Tracking (M4)
 
 ## Matériel de mesure
 
@@ -57,10 +57,75 @@ tests automatisés (`backend/tests/test_yolo_detector.py`), qui utilisent un
 modèle factice pour tester la logique de parsing sans dépendre d'une image
 tierce ou du réseau.
 
-## Comment reproduire
+## Comment reproduire (détection)
 
 ```bash
 cd backend
 source .venv/bin/activate
 python scripts/benchmark_detection.py /chemin/vers/une/vidéo.mp4 --frames 30
+```
+
+## Tracking (M4)
+
+### Algorithme retenu
+
+`IoUTracker` (`backend/app/tracking/tracker.py`) : association par
+recouvrement de boîtes (IoU) entre frames consécutives via l'algorithme
+hongrois (`scipy.optimize.linear_sum_assignment`), **sans filtre de
+Kalman** (pas de prédiction de mouvement). Choisi pour rester simple, léger
+(une seule dépendance ajoutée : `scipy`), et surtout **entièrement
+testable** avec des séquences synthétiques déterministes — voir
+`backend/tests/test_tracker.py` (ID stable sur mouvement continu, nouvel ID
+après disparition prolongée, deux objets suivis indépendamment, cas de
+croisement sans occlusion totale).
+
+Limite assumée : une occlusion complète (une personne totalement masquée
+par une autre pendant une ou plusieurs frames) n'est pas garantie de
+conserver le bon ID avec cette approche. Si le taux de changement d'ID
+s'avère trop élevé sur de vraies vidéos de match (joueurs qui se
+chevauchent beaucoup plus qu'au test), le remplacer par un tracker avec
+prédiction de mouvement (SORT+Kalman, ByteTrack) est possible sans changer
+l'interface `Tracker` ni le code appelant.
+
+### Validation qualitative (pipeline réel)
+
+Vidéo de test : photo réelle de deux personnes (même image que pour M3),
+animée par un panoramique simulé (fenêtre de recadrage qui se déplace sur
+l'image sur 4 secondes), pour obtenir un vrai mouvement inter-frames avec
+de vraies détections YOLO — pas seulement des détections synthétiques.
+
+- Pipeline complet (upload → détection → tracking) exécuté sans crash via
+  l'API réelle (`GET /videos/{id}/tracks`).
+- Sur un premier test (encodage H.264, vérifié en dehors du navigateur) :
+  2 trajectoires obtenues, chacune stable sur toute sa durée de visibilité
+  (34 points consécutifs pour la 1ʳᵉ personne, 24 pour la 2ᵉ, **aucun
+  changement d'ID observé** au sein de chaque trajectoire). Les deux
+  trajectoires se chevauchent brièvement (~0,13s) au moment où la 2ᵉ
+  personne entre dans le champ, sans provoquer de confusion d'identité.
+- Sur un second test, bout en bout dans le navigateur (encodage VP9, voir
+  `docs/architecture.md`/limites de validation M2) : 3 trajectoires
+  obtenues au lieu de 2 — une légère différence probablement due aux
+  artefacts de compression VP9 qui modifient la confiance de détection
+  d'une frame à l'autre. Les trajectoires restent individuellement
+  cohérentes (pas de saut erratique visible dans les coordonnées
+  affichées), mais ce résultat **confirme que le taux de changement d'ID
+  dépend aussi de la qualité/stabilité de la détection en amont**, pas
+  uniquement du tracker — à garder en tête en M9 (Event Engine) et à
+  mesurer précisément sur de vraies vidéos de match dès qu'elles seront
+  disponibles.
+
+### Ce qui n'a pas été testé
+
+Le cas difficile (occlusion totale entre deux joueurs, typique d'un match
+de basket réel — contacts, écrans, duels) n'a pas pu être testé avec les
+images disponibles. C'est le scénario le plus susceptible de provoquer des
+changements d'ID avec `IoUTracker` ; à surveiller en priorité une fois de
+vraies vidéos de match disponibles.
+
+### Comment reproduire (tracking)
+
+```bash
+curl -X POST http://localhost:8000/videos -F "file=@video.mp4"
+# récupérer l'"id" retourné, puis :
+curl "http://localhost:8000/videos/<id>/tracks?confidence=0.5&sample_every_n_frames=2"
 ```
