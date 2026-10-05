@@ -33,14 +33,14 @@ l'utilisateur.
 
 ## M1 — Software architecture (squelette)
 
-- [ ] M1.1 Initialiser `backend/` (pyproject.toml, structure `app/` vide
+- [x] M1.1 Initialiser `backend/` (pyproject.toml, structure `app/` vide
       conforme à `CLAUDE.md` §3)
-- [ ] M1.2 Initialiser `frontend/` (Vite + React + TypeScript)
-- [ ] M1.3 `.gitignore` (venv, `__pycache__`, `node_modules`, poids de
+- [x] M1.2 Initialiser `frontend/` (Vite + React + TypeScript)
+- [x] M1.3 `.gitignore` (venv, `__pycache__`, `node_modules`, poids de
       modèles, vidéos)
-- [ ] M1.4 Endpoint FastAPI `/health`
-- [ ] M1.5 Page frontend minimale qui appelle `/health` et affiche le statut
-- [ ] M1.6 `README.md` avec instructions de lancement local (backend +
+- [x] M1.4 Endpoint FastAPI `/health`
+- [x] M1.5 Page frontend minimale qui appelle `/health` et affiche le statut
+- [x] M1.6 `README.md` avec instructions de lancement local (backend +
       frontend)
 
 **Critère d'acceptation** : `uvicorn` démarre, `npm run dev` démarre, le
@@ -51,21 +51,31 @@ stade.
 
 ## M2 — Video engine
 
-- [ ] M2.1 Interface `VideoEngine` (open / read / seek / fps / timestamp),
+- [x] M2.1 Interface `VideoEngine` (open / read / seek / fps / timestamp),
       pensée dès le départ pour accepter plus tard un flux en plus d'un
       fichier (cf. `docs/architecture.md` §5), sans être implémentée pour le
       flux en M2
-- [ ] M2.2 Implémentation lecture fichier MP4
-- [ ] M2.3 Endpoint upload vidéo + extraction des métadonnées (durée, fps,
+- [x] M2.2 Implémentation lecture fichier MP4
+- [x] M2.3 Endpoint upload vidéo + extraction des métadonnées (durée, fps,
       résolution)
-- [ ] M2.4 Extraction de frame à la demande par timestamp, exposée via l'API
-- [ ] M2.5 Lecteur vidéo frontend basique (play / pause / seek)
-- [ ] M2.6 Tests unitaires (ouverture, lecture séquentielle, seek, format
+- [x] M2.4 Extraction de frame à la demande par timestamp, exposée via l'API
+- [x] M2.5 Lecteur vidéo frontend basique (play / pause / seek)
+- [x] M2.6 Tests unitaires (ouverture, lecture séquentielle, seek, format
       non supporté)
 
 **Critère d'acceptation** : une vidéo MP4 uploadée est lisible dans le
 frontend (play/pause/seek) avec ses métadonnées affichées, sans aucune
 détection.
+
+**Validation effectuée** : 11 tests backend (video engine + API) verts ;
+vérification de bout en bout via navigateur headless (upload, métadonnées
+affichées, lecture/pause, seek fonctionnel). **Limite connue de
+l'environnement de validation** : le Chromium headless de ce sandbox n'a pas
+le codec H.264 (open-source, sans codec propriétaire) — la vérification
+navigateur a donc été faite avec un flux vidéo en VP9, et la lecture H.264
+côté backend (OpenCV) a été vérifiée séparément. Les navigateurs réels
+(Chrome, Edge, Firefox, Safari) supportent nativement le H.264 des vidéos de
+téléphone/caméra — à reconfirmer avec un navigateur normal dès que possible.
 
 ---
 
