@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+import { API_BASE_URL } from './api/config'
+import { VideoImport } from './components/VideoImport'
 
 type BackendStatus = 'loading' | 'ok' | 'error'
 
@@ -26,6 +26,8 @@ function App() {
         {status === 'ok' && '✅ connecté'}
         {status === 'error' && '❌ injoignable'}
       </p>
+
+      {status === 'ok' && <VideoImport />}
     </main>
   )
 }
