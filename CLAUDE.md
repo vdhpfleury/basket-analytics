@@ -48,6 +48,7 @@ basket-analytics/
 │   │   ├── video/          # video engine (lecture, buffer, timestamps)
 │   │   ├── detection/      # détection joueurs/arbitres
 │   │   ├── tracking/       # suivi des tracks
+│   │   ├── identification/ # association track -> joueur (+ aide couleur)
 │   │   ├── court/          # calibration terrain / homographie
 │   │   ├── events/         # event engine
 │   │   ├── statistics/     # statistics engine (indépendant de la vision)

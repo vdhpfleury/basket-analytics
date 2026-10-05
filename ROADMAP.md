@@ -140,20 +140,33 @@ occlusion totale non testée — dans `docs/benchmarks.md`).
 
 ## M5 — Player identification (+ correction humaine, cœur du produit)
 
-- [ ] M5.1 Implémenter `PlayerIdentification` en DB
-- [ ] M5.2 Interface de correction manuelle : liste des tracks avec
+- [x] M5.1 Implémenter `PlayerIdentification` en DB
+- [x] M5.2 Interface de correction manuelle : liste des tracks avec
       sélection du joueur réel (menu déroulant), par match
-- [ ] M5.3 Heuristique couleur de maillot pour pré-grouper les tracks par
+- [x] M5.3 Heuristique couleur de maillot pour pré-grouper les tracks par
       équipe (aide à la correction — **pas** une identification automatique
       fiable, à documenter comme telle)
-- [ ] M5.4 Sauvegarde des associations avec traçabilité (`method`,
+- [x] M5.4 Sauvegarde des associations avec traçabilité (`method`,
       `manually_verified`, `verified_by`)
-- [ ] M5.5 Tests : persistance correcte, un track non identifié reste
+- [x] M5.5 Tests : persistance correcte, un track non identifié reste
       explicitement "inconnu" (jamais assigné par défaut à un joueur)
 
 **Critère d'acceptation** : pour un match donné, l'utilisateur peut associer
 chaque track significatif à un joueur de l'effectif via l'UI, et cette
 association est utilisée par la suite du pipeline.
+
+**Validation effectuée** : `PlayerIdentification` en mémoire (temporaire
+avant M12), scoping par vidéo. Heuristique couleur = échantillonnage de la
+couleur dominante sur le buste (évite tête/jambes/fond) + regroupement par
+k-means (`scipy`, déjà une dépendance) — **aide visuelle seulement**,
+jamais utilisée comme identification automatique. 27 tests supplémentaires
+(62 au total) : roster, heuristique couleur, store d'identification (track
+non identifié = `None` explicite, jamais un joueur par défaut), API
+(résumé des tracks, vignette, assigner/retirer, erreurs). Validation de
+bout en bout en navigateur : création d'une équipe et de 2 joueurs, lecture
+des tracks à identifier (vignette + couleur + menu déroulant), assignation
+d'un track à un joueur, **persistance vérifiée après rechargement de la
+liste**.
 
 ---
 
