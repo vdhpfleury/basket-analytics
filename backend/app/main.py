@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.api import detection, health, tracking, videos
+from app.api import detection, health, identification, roster, tracking, videos
 
 app = FastAPI(title="basket-analytics")
 
@@ -17,6 +17,8 @@ app.include_router(health.router)
 app.include_router(videos.router)
 app.include_router(detection.router)
 app.include_router(tracking.router)
+app.include_router(roster.router)
+app.include_router(identification.router)
 
 # Sert les fichiers vidéo bruts pour lecture directe par le <video> du frontend
 # (play/pause/seek natifs, support des requêtes Range).

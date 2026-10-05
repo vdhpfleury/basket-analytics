@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
+import type { Team } from '../api/roster'
 import { uploadVideo, videoFileUrl, VideoUploadError, type VideoMetadata } from '../api/videos'
 import { DetectionViewer } from './DetectionViewer'
+import { IdentificationViewer } from './IdentificationViewer'
 import { TrackingViewer } from './TrackingViewer'
 
 type UploadState = 'idle' | 'uploading' | 'done' | 'error'
@@ -11,7 +13,11 @@ function formatDuration(seconds: number): string {
   return `${minutes}:${remaining.toString().padStart(2, '0')}`
 }
 
-export function VideoImport() {
+interface Props {
+  teams: Team[]
+}
+
+export function VideoImport({ teams }: Props) {
   const [state, setState] = useState<UploadState>('idle')
   const [metadata, setMetadata] = useState<VideoMetadata | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -68,6 +74,7 @@ export function VideoImport() {
 
           <DetectionViewer metadata={metadata} videoRef={videoRef} />
           <TrackingViewer metadata={metadata} />
+          <IdentificationViewer metadata={metadata} teams={teams} />
         </>
       )}
     </section>

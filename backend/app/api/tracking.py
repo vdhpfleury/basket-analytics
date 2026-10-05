@@ -85,3 +85,13 @@ def get_tracks(
     _tracks_registry[video_id] = track_points
 
     return [_to_response(tp) for tp in track_points]
+
+
+def get_cached_tracks(video_id: str) -> list[TrackPoint] | None:
+    """Accès au cache pour les autres routers (ex. identification, M5).
+
+    Retourne `None` si le tracking n'a pas encore été lancé pour cette
+    vidéo — à distinguer d'une liste vide (vidéo traitée mais sans aucune
+    détection).
+    """
+    return _tracks_registry.get(video_id)

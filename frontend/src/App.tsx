@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { API_BASE_URL } from './api/config'
+import type { Team } from './api/roster'
+import { RosterManager } from './components/RosterManager'
 import { VideoImport } from './components/VideoImport'
 
 type BackendStatus = 'loading' | 'ok' | 'error'
 
 function App() {
   const [status, setStatus] = useState<BackendStatus>('loading')
+  const [teams, setTeams] = useState<Team[]>([])
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/health`)
@@ -27,7 +30,12 @@ function App() {
         {status === 'error' && '❌ injoignable'}
       </p>
 
-      {status === 'ok' && <VideoImport />}
+      {status === 'ok' && (
+        <>
+          <RosterManager onTeamsChange={setTeams} />
+          <VideoImport teams={teams} />
+        </>
+      )}
     </main>
   )
 }
