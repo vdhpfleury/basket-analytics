@@ -91,6 +91,11 @@ async def upload_video(file: UploadFile) -> VideoMetadataResponse:
     return _to_response(video_id, entry)
 
 
+def get_video_entry(video_id: str) -> _VideoEntry | None:
+    """Accès au registre pour les autres routers (ex. detection)."""
+    return _registry.get(video_id)
+
+
 @router.get("/{video_id}", response_model=VideoMetadataResponse)
 def get_video(video_id: str) -> VideoMetadataResponse:
     entry = _registry.get(video_id)

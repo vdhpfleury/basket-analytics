@@ -81,21 +81,31 @@ téléphone/caméra — à reconfirmer avec un navigateur normal dès que possib
 
 ## M3 — Player detection
 
-- [ ] M3.1 Choisir et intégrer un framework de détection (modèle
+- [x] M3.1 Choisir et intégrer un framework de détection (modèle
       nano/small, adapté CPU)
-- [ ] M3.2 Interface `Detector` découplée de l'implémentation choisie
-- [ ] M3.3 Détecteur par défaut configurable (modèle, seuil de confiance)
-- [ ] M3.4 Endpoint API : détection sur une frame ou un intervalle →
+- [x] M3.2 Interface `Detector` découplée de l'implémentation choisie
+- [x] M3.3 Détecteur par défaut configurable (modèle, seuil de confiance)
+- [x] M3.4 Endpoint API : détection sur une frame ou un intervalle →
       bounding boxes
-- [ ] M3.5 Visualisation frontend des bounding boxes
-- [ ] M3.6 Mesure et log du FPS de traitement CPU
-- [ ] M3.7 Tests unitaires (interface, seuils, cas sans détection)
-- [ ] M3.8 Documenter les résultats de benchmark (nouveau
+- [x] M3.5 Visualisation frontend des bounding boxes
+- [x] M3.6 Mesure et log du FPS de traitement CPU
+- [x] M3.7 Tests unitaires (interface, seuils, cas sans détection)
+- [x] M3.8 Documenter les résultats de benchmark (nouveau
       `docs/benchmarks.md`)
 
 **Critère d'acceptation** : détection stable sans crash sur le jeu de test
 (clips YouTube), FPS mesuré et documenté, seuil de confiance configurable
 démontré.
+
+**Validation effectuée** : framework retenu = YOLOv8n (Ultralytics), classe
+COCO "person". 20 tests backend verts (parsing/seuillage sur modèle factice
++ intégration modèle réel sans crash sur frame vide). Benchmark CPU :
+~16-20 FPS selon résolution (détail dans `docs/benchmarks.md`), avec
+estimation du temps de traitement pour un match complet. Validation de bout
+en bout en navigateur headless : upload d'une vraie vidéo avec personnes →
+2 détections correctement positionnées (confiance ~0.82-0.84) ; relever le
+seuil de confiance à 0.9 fait bien disparaître les 2 détections, démontrant
+que le seuil est réellement configurable depuis l'UI.
 
 ---
 
