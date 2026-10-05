@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { uploadVideo, videoFileUrl, VideoUploadError, type VideoMetadata } from '../api/videos'
+import { DetectionViewer } from './DetectionViewer'
 
 type UploadState = 'idle' | 'uploading' | 'done' | 'error'
 
@@ -14,6 +15,7 @@ export function VideoImport() {
   const [metadata, setMetadata] = useState<VideoMetadata | null>(null)
   const [error, setError] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
@@ -59,9 +61,11 @@ export function VideoImport() {
               {metadata.width}×{metadata.height}
             </dd>
           </dl>
-          <video controls width={480} src={videoFileUrl(metadata)}>
+          <video ref={videoRef} controls width={480} src={videoFileUrl(metadata)}>
             Votre navigateur ne supporte pas la lecture vidéo HTML5.
           </video>
+
+          <DetectionViewer metadata={metadata} videoRef={videoRef} />
         </>
       )}
     </section>
