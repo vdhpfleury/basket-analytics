@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { uploadVideo, videoFileUrl, VideoUploadError, type VideoMetadata } from '../api/videos'
 import { DetectionViewer } from './DetectionViewer'
+import { TrackingViewer } from './TrackingViewer'
 
 type UploadState = 'idle' | 'uploading' | 'done' | 'error'
 
@@ -66,6 +67,7 @@ export function VideoImport() {
           </video>
 
           <DetectionViewer metadata={metadata} videoRef={videoRef} />
+          <TrackingViewer metadata={metadata} />
         </>
       )}
     </section>

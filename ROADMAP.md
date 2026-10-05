@@ -111,18 +111,30 @@ que le seuil est réellement configurable depuis l'UI.
 
 ## M4 — Tracking
 
-- [ ] M4.1 Implémenter `TrackPoint`/`Track` (cf. `docs/data_model.md`)
-- [ ] M4.2 Intégrer un algorithme de tracking compatible CPU (ex. ByteTrack/SORT)
-- [ ] M4.3 Pipeline détection → tracking sur une séquence, persistance des
+- [x] M4.1 Implémenter `TrackPoint`/`Track` (cf. `docs/data_model.md`)
+- [x] M4.2 Intégrer un algorithme de tracking compatible CPU (ex. ByteTrack/SORT)
+- [x] M4.3 Pipeline détection → tracking sur une séquence, persistance des
       `TrackPoint`
-- [ ] M4.4 Visualisation frontend des trajectoires
-- [ ] M4.5 Tests unitaires + test d'intégration sur fixture mesurant la
+- [x] M4.4 Visualisation frontend des trajectoires
+- [x] M4.5 Tests unitaires + test d'intégration sur fixture mesurant la
       stabilité des IDs
 
 **Critère d'acceptation** : sur un extrait test, un joueur qui traverse le
 terrain conserve son ID la majorité du temps ; le taux de changement d'ID
 est mesuré et documenté (pas de seuil arbitraire imposé avant d'avoir des
 chiffres réels).
+
+**Validation effectuée** : tracker retenu = IoU + algorithme hongrois
+("SORT allégé", sans filtre de Kalman — voir `docs/benchmarks.md` pour la
+justification et les limites assumées). 15 tests backend supplémentaires
+(35 au total) : stabilité d'ID sur mouvement continu, nouvel ID après
+disparition prolongée, deux objets suivis indépendamment sans confusion,
+cas de croisement sans occlusion totale, pipeline d'intégration avec
+détecteur factice. Validation de bout en bout (pipeline réel, vraie vidéo
+avec personnes, navigateur headless) : trajectoires correctement affichées
+et positionnées ; **aucun changement d'ID observé** au sein des
+trajectoires continues sur les deux vidéos de test (détail et limites —
+occlusion totale non testée — dans `docs/benchmarks.md`).
 
 ---
 

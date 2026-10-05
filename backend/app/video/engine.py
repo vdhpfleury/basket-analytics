@@ -9,6 +9,7 @@ aval (détection, tracking, etc.).
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -35,6 +36,18 @@ class VideoSource(ABC):
 
         Lève `ValueError` si aucune frame ne peut être lue à cette position
         (timestamp hors de la vidéo, flux corrompu...).
+        """
+
+    @abstractmethod
+    def iter_frames(self) -> Iterator[tuple[float, np.ndarray]]:
+        """Itère séquentiellement sur les frames, dans l'ordre, avec leur timestamp.
+
+        Contrairement à `read_frame_at` (accès aléatoire, utilisé pour une
+        frame isolée en M2/M3), cette méthode lit les frames une par une
+        sans "seek" : c'est la seule façon fiable d'obtenir des frames
+        réellement consécutives, nécessaire pour le tracking (M4), un seek
+        par timestamp pouvant atterrir sur la keyframe la plus proche plutôt
+        que la frame exacte.
         """
 
     @abstractmethod
@@ -68,6 +81,17 @@ class FileVideoSource(VideoSource):
         if not success:
             raise ValueError(f"Impossible de lire une frame à t={timestamp_seconds}s")
         return frame
+
+    def iter_frames(self) -> Iterator[tuple[float, np.ndarray]]:
+        fps = self._capture.get(cv2.CAP_PROP_FPS)
+        frame_index = 0
+        while True:
+            success, frame = self._capture.read()
+            if not success:
+                return
+            timestamp = frame_index / fps if fps > 0 else 0.0
+            yield timestamp, frame
+            frame_index += 1
 
     def close(self) -> None:
         self._capture.release()
