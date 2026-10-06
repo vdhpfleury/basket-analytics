@@ -172,20 +172,32 @@ liste**.
 
 ## M6 — Court calibration
 
-- [ ] M6.1 Interface de calibration manuelle (points image ↔ points terrain
+- [x] M6.1 Interface de calibration manuelle (points image ↔ points terrain
       connus) sur une frame fixe
-- [ ] M6.2 Calcul de l'homographie à partir des points sélectionnés
-- [ ] M6.3 Sauvegarde de `CourtCalibration` par match
-- [ ] M6.4 Fonction réutilisable pixel → coordonnées terrain (utilisée en
+- [x] M6.2 Calcul de l'homographie à partir des points sélectionnés
+- [x] M6.3 Sauvegarde de `CourtCalibration` par match
+- [x] M6.4 Fonction réutilisable pixel → coordonnées terrain (utilisée en
       M7/M8)
-- [ ] M6.5 Visualisation terrain 2D avec projection des tracks (validation
+- [x] M6.5 Visualisation terrain 2D avec projection des tracks (validation
       visuelle)
-- [ ] M6.6 Tests unitaires sur l'homographie (points de contrôle connus →
+- [x] M6.6 Tests unitaires sur l'homographie (points de contrôle connus →
       coordonnées attendues)
 
 **Critère d'acceptation** : sur une vidéo du jeu de test, la calibration
 manuelle produit une projection terrain visuellement cohérente (joueurs dans
 les limites du terrain affiché).
+
+**Validation effectuée** : catalogue de 11 repères identifiables (coins,
+ligne médiane, centre, coins de raquette — dimensions FIBA 28×15m),
+homographie via `cv2.findHomography` (RANSAC au-delà de 4 points). 19
+tests supplémentaires (81 au total), dont un test rigoureux par
+transformation perspective connue (calibrage sur 4 points, vérification
+sur un 5ᵉ point non utilisé — preuve de généralisation, pas de recopiage).
+Validation de bout en bout en navigateur avec une vidéo construite
+spécifiquement pour ce test (terrain dessiné aux dimensions exactes +
+vraie personne compositée dessus, détectée par YOLO avec confiance 0.94) :
+calibration sur les 4 coins → erreur de reprojection 0,00 m, et le joueur
+projeté atterrit bien à l'intérieur du rectangle du terrain affiché.
 
 ---
 
