@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import type { Team } from '../api/roster'
 import { uploadVideo, videoFileUrl, VideoUploadError, type VideoMetadata } from '../api/videos'
+import { CalibrationViewer } from './CalibrationViewer'
 import { DetectionViewer } from './DetectionViewer'
 import { IdentificationViewer } from './IdentificationViewer'
 import { TrackingViewer } from './TrackingViewer'
@@ -74,6 +75,7 @@ export function VideoImport({ teams }: Props) {
 
           <DetectionViewer metadata={metadata} videoRef={videoRef} />
           <TrackingViewer metadata={metadata} />
+          <CalibrationViewer metadata={metadata} />
           <IdentificationViewer metadata={metadata} teams={teams} />
         </>
       )}
